@@ -4,7 +4,7 @@ import cv2
 def filter_color(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         clicked_color = hsv[y, x, :]
-        param[0][:3] = [max(clicked_color[0] - 15, 0), 0, 0]
+        param[0][:3] = [max(clicked_color[0] - 15, 0), 100, 100]
         param[1][:3] = [min(clicked_color[0] + 15, 360), 255, 255]
         # print('Clicked:', clicked_color)
         # print('Lower:', param[0])
