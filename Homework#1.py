@@ -58,3 +58,7 @@ for i in range(4):
             array3D[i][j].append('?')
 print(array3D)
 
+#### DICTIONARY EXERCISES ####
+
+alphabet = {(1,'a'),(2,'b')}
+print(alphabet)
