@@ -58,7 +58,70 @@ for i in range(4):
             array3D[i][j].append('?')
 print(array3D)
 
-#### DICTIONARY EXERCISES ####
+### DICTIONARY EXERCISES ###
 
-alphabet = {(1,'a'),(2,'b')}
+alphabet = {
+    1:'a',
+    2:'b',
+    3:'c',
+    4:'d',
+    5:'e'
+}
 print(alphabet)
+
+print(4 in alphabet)
+print(7 in alphabet)
+
+print('a' in alphabet.values())
+print('z' in alphabet.values())
+
+alphabet[6]='f'
+print(alphabet)
+
+alphabet.pop(2)
+print(alphabet)
+
+dictNum = {
+    'x':700,
+    'y':56874,
+    'z':990
+}
+
+print('Max:', max(dictNum.values()))
+print('Min:', min(dictNum.values()))
+
+### NUMPY EXERCISES ###
+
+firstArray = np.arange(20)
+print(firstArray)
+
+secondArray = np.arange(30,40)
+print(secondArray)
+
+matrix = np.zeros((6,6))
+print(matrix)
+
+onesMatrix = np.ones((4,4))
+print(onesMatrix)
+
+sampleArray = np.array([[11,22,33],[44,55,66],[77,88,99]])
+print(sampleArray)
+print(sampleArray[:,2])
+
+toReverse = np.arange(12,38)
+print(toReverse)
+print(np.flip(toReverse))
+
+CwHwMat = np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]])
+print(CwHwMat[0:2,1:3])
+print(CwHwMat[1:,2:])
+
+X = CwHwMat[:,0:3]
+y = CwHwMat[:,3]
+print('X:',X)
+print('Y:',y)
+
+Test = X[0:1,:]
+Train = X[1:,:]
+print("Test:", Test)
+print("Train:", Train)
