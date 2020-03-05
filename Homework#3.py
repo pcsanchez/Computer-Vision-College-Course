@@ -1,16 +1,19 @@
-import time
 import os
+from PIL import Image
+import numpy as np
 import requests
+import cv2
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
+from io import BytesIO
 
 ###############################
 #### CONSTANT DECLARATIONS ####
 ###############################
 
+searchTerm = input("Enter search term: \n")
+
 PARENT_DIR = "/home/pcsanchez/Desktop/"
-GENERAL_DIR = "Dogs/"
+GENERAL_DIR = searchTerm + "/"
 TRAINING_DIR = "training"
 TESTING_DIR = "testing"
 
@@ -45,22 +48,26 @@ except OSError:
 else:
     print("Succesfully created the directory %s" %TESTING_PATH)
 
-RESPONSE = requests.get(
-    "https://api.shutterstock.com/v2/oauth/authorize",
-    params={"client_id": "dacc7-8c9b6-8c77f-9b788-e3f1c-6314c",
-            "redirect_url": "http://localhost:3000/callback",
-            "response_type": "code",
-            "state": "Data set gathering",
-            "scope": "licenses.create purchases.view licenses.view"})
+DRIVER.get('https://www.shutterstock.com/search/' + searchTerm)
+# time.sleep(5)
+IMGS = DRIVER.find_elements_by_css_selector('.z_h_a.z_h_b')
 
-print(RESPONSE.json())
+TOTAL_SIZE = len(IMGS)
 
+os.chdir(TRAINING_PATH)
+for i in range(int(TOTAL_SIZE*0.8)):
+    response = requests.get(IMGS[i].get_attribute('src'))
+    img = Image.open(BytesIO(response.content))
+    imgarr = np.asarray(img)
+    fixedimg = cv2.cvtColor(imgarr,cv2.COLOR_RGB2BGR)
+    cv2.imwrite("train" + str(i) + ".jpg", fixedimg)
+    print(IMGS[i].get_attribute('src'))
 
-
-
-# driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
-# driver.get('http://www.unsplash.com/')
-# searchQuery = driver.find_element_by_name("searchKeyword")
-# searchQuery.clear()
-# searchQuery.send_keys("Dog")
-# searchQuery.send_keys(Keys.RETURN)
+os.chdir(TESTING_PATH)
+for i in range(int(TOTAL_SIZE*0.8),TOTAL_SIZE):
+    response = requests.get(IMGS[i].get_attribute('src'))
+    img = Image.open(BytesIO(response.content))
+    imgarr = np.asarray(img)
+    fixedimg = cv2.cvtColor(imgarr,cv2.COLOR_RGB2BGR)
+    cv2.imwrite("test" + str(i-int(TOTAL_SIZE*0.8)) + ".jpg", fixedimg)
+    print(IMGS[i].get_attribute('src'))
