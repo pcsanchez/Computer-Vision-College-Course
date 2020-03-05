@@ -45,16 +45,16 @@ except OSError:
 else:
     print("Succesfully created the directory %s" %TESTING_PATH)
 
-response = requests.get(
-    "https://api.unsplash.com/search/photos?page=1&query=dog",
-    headers={"Authorization": "Client-ID m7qC-55mLvNEs6GI0TkKiVJAtXoi2OvYJ7oLEuzGyq0"})
+RESPONSE = requests.get(
+    "https://api.shutterstock.com/v2/oauth/authorize",
+    params={"client_id": "dacc7-8c9b6-8c77f-9b788-e3f1c-6314c",
+            "redirect_url": "http://localhost:3000/callback",
+            "response_type": "code",
+            "state": "Data set gathering",
+            "scope": "licenses.create purchases.view licenses.view"})
 
-results = response.json()['results']
+print(RESPONSE.json())
 
-
-for i in range(len(results)):
-    DRIVER.get(results[i]['links']['download'])
-    ActionChains(DRIVER).key_down(Keys.CONTROL).send_keys('s').key_up(Keys.CONTROL).perform()
 
 
 
