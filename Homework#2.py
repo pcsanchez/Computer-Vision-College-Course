@@ -44,6 +44,8 @@ while True:
 
     cv2.imshow('video',frame)
     cv2.imshow('segmented', res2)
+    cv2.imshow('hsv', hsv)
+    cv2.imshow('mask',mask)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
