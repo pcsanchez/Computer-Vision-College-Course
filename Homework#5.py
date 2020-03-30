@@ -1,3 +1,7 @@
+# Francisco Carlos Sanchez Ramirez
+# A01196903
+# B.S. Digital Systems and Robotics Engineering
+
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
@@ -33,10 +37,6 @@ mirrorImg = cv2.flip(img.copy(), 1)
 new_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 new_img = cv2.resize(new_img,(300, 200))
 
-while True:
-    cv2.imshow('test', new_img)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cv2.destroyAllWindows()
+# Es necesario dividir el data set en entranamiento y validacion ya que
+# es necesario ver el comportamiento del modelo con datos que nunca ha visto antes.
+# Esto para verificar su robustes.
