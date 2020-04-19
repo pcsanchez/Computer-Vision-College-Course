@@ -13,27 +13,27 @@ from io import BytesIO
 
 search_term = input("Enter search term: \n")
 
-parent_dir = "/home/pcsanchez/Desktop/"
+training_dir = "/home/pcsanchez/Pictures/Cats_and_Dogs/train/"
+testing_dir = "/home/pcsanchez/Pictures/Cats_and_Dogs/test/"
+validation_dir = "/home/pcsanchez/Pictures/Cats_and_Dogs/valid/"
 general_dir = search_term + "/"
-training_dir = "training"
-testing_dir = "testing"
 
 driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
 
-path = os.path.join(parent_dir, general_dir)
-training_path = os.path.join(path, training_dir)
-testing_path = os.path.join(path, testing_dir)
+training_path = os.path.join(training_dir, general_dir)
+testing_path = os.path.join(testing_dir, general_dir)
+validation_path = os.path.join(validation_dir, general_dir)
 
 ############################
 #### DIRECTORY CREATION ####
 ############################
 
 try:
-    os.mkdir(path)
+    os.mkdir(validation_path)
 except OSError:
-    print('Creation of the directory %s failed' % path)
+    print('Creation of the directory %s failed' % validation_path)
 else:
-    print('Succesfully created the directory %s' %path)
+    print('Succesfully created the directory %s' % validation_path)
 
 try:
     os.mkdir(training_path)
@@ -58,10 +58,11 @@ aux = driver.find_element_by_class_name('b_ay_g').text
 aux = aux.split()[1]
 total_results = int(aux.replace(',', ''))
 
-number_of_downloads = min(3000, total_results)
+number_of_downloads = min(33, total_results)
 photos_downloaded = 0
 train_index = 0
 test_index = 0
+valid_index = 0
 
 while photos_downloaded < number_of_downloads:
     button_div = driver.find_element_by_class_name('z_b_g')
@@ -69,11 +70,12 @@ while photos_downloaded < number_of_downloads:
     body = driver.find_element_by_tag_name('body')
     for x in range(20):
         body.send_keys(Keys.PAGE_DOWN)
-    imgs = driver.find_elements_by_css_selector('img.z_h_a.z_h_b')
+    imgs = driver.find_elements_by_css_selector('img.z_h_c.z_h_e')
+    print(len(imgs))
     photos_downloaded += len(imgs)
 
     os.chdir(training_path)
-    for i in range(int(len(imgs)*0.8)):
+    for i in range(int(len(imgs)*0.6)):
         response = requests.get(imgs[i].get_attribute('src'))
         img = Image.open(BytesIO(response.content))
         imgarr = np.asarray(img)
@@ -81,9 +83,19 @@ while photos_downloaded < number_of_downloads:
         cv2.imwrite('train' + str(train_index) + '.jpg', fixedimg)
         train_index = train_index + 1
         print(imgs[i].get_attribute('src'))
-    
+
+    os.chdir(validation_path)
+    for i in range(int(len(imgs)*0.6)+1, int(len(imgs)*0.85)):
+        response = requests.get(imgs[i].get_attribute('src'))
+        img = Image.open(BytesIO(response.content))
+        imgarr = np.asarray(img)
+        fixedimg = cv2.cvtColor(imgarr, cv2.COLOR_RGB2BGR)
+        cv2.imwrite('valid' + str(valid_index) + '.jpg', fixedimg)
+        valid_index = valid_index + 1
+        print(imgs[i].get_attribute('src'))
+
     os.chdir(testing_path)
-    for i in range(int(len(imgs)*0.8), len(imgs)):
+    for i in range(int(len(imgs)*0.85)+1, len(imgs)):
         response = requests.get(imgs[i].get_attribute('src'))
         img = Image.open(BytesIO(response.content))
         imgarr = np.asarray(img)
@@ -91,5 +103,6 @@ while photos_downloaded < number_of_downloads:
         cv2.imwrite('test' + str(test_index) + '.jpg', fixedimg)
         test_index = test_index + 1
         print(imgs[i].get_attribute('src'))
+
 
     driver.get(button.get_attribute('href'))
